@@ -5,171 +5,82 @@
   <title>Getting to Weston-super-Mare</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body {
-      margin: 0;
-      font-family: sans-serif;
-      background: #fff;
-      color: #222;
-      padding: 2rem;
+    body { margin: 0; font-family: sans-serif; background: #fff; color: #222; padding: 2rem; }
+    h2 { text-align: center; margin-bottom: 1rem; }
+    #regionSelector, #searchInput, #backButton {
+      display: block; margin: 0.5rem auto; padding: 0.5rem 1rem; font-size: 1rem;
+      border-radius: 6px; border: 1px solid #ccc; max-width: 300px;
     }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 1rem;
-    }
-
-    #regionSelector,
-    #searchInput,
+    #searchInput { display: none; }
     #backButton {
-      display: block;
-      margin: 0.5rem auto;
-      padding: 0.5rem 1rem;
-      font-size: 1rem;
-      border-radius: 6px;
-      border: 1px solid #ccc;
-      max-width: 300px;
+      display: none; background: #f44336; color: #fff;
+      border: none; cursor: pointer;
     }
-
-    #searchInput {
-      display: none;
-    }
-
-    #backButton {
-      display: none;
-      background: #f44336;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-    }
-
-    .region {
-      display: none;
-      margin-top: 2rem;
-    }
-
-    .region.active {
-      display: block;
-      animation: fadeIn 0.5s ease-in;
-    }
-
+    .region { display: none; margin-top: 2rem; }
+    .region.active { display: block; animation: fadeIn 0.5s ease-in; }
     .region h3 {
-      text-align: center;
-      border-bottom: 2px solid #eee;
-      padding-bottom: 0.5rem;
-      margin-bottom: 1rem;
+      text-align: center; border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem; margin-bottom: 1rem;
     }
-
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
       gap: 1rem;
     }
-
     .card-wrapper {
-      perspective: 1000px;
-      cursor: pointer;
-      animation: popIn 0.4s ease forwards;
-      opacity: 0;
+      perspective: 1000px; cursor: pointer;
+      animation: popIn 0.4s ease forwards; opacity: 0;
     }
-
     @keyframes popIn {
-      to {
-        transform: scale(1);
-        opacity: 1;
-      }
-      from {
-        transform: scale(0.95);
-        opacity: 0;
-      }
+      to { transform: scale(1); opacity: 1; }
+      from { transform: scale(0.95); opacity: 0; }
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
-    }
-
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     .card {
-      width: 100%;
-      height: 130px;
-      position: relative;
-      transform-style: preserve-3d;
+      width: 100%; height: 130px;
+      position: relative; transform-style: preserve-3d;
       transition: transform 0.6s;
     }
-
-    .card.flip {
-      transform: rotateY(180deg);
-    }
-
+    .card.flip { transform: rotateY(180deg); }
     .card-side {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 10px;
+      position: absolute; width: 100%; height: 100%;
+      backface-visibility: hidden; border-radius: 10px;
       box-shadow: 0 3px 8px rgba(0,0,0,0.1);
-      padding: 0.75rem;
-      box-sizing: border-box;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      background: #f9f9f9;
+      padding: 0.75rem; box-sizing: border-box;
+      display: flex; flex-direction: column;
+      justify-content: center; background: #f9f9f9;
     }
-
     .card-front {
-      background: #ffffff;
-      font-weight: bold;
-      text-align: center;
-      font-size: 1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      background: #ffffff; font-weight: bold;
+      text-align: center; font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
     }
-
     .card-back {
-      transform: rotateY(180deg);
-      background: #e3f1ff;
-      font-size: 0.85rem;
-      line-height: 1.3;
+      transform: rotateY(180deg); background: #e3f1ff;
+      font-size: 0.85rem; line-height: 1.3;
     }
-
     .card-wrapper.selected .card {
-      outline: 3px solid #2196F3;
-      border-radius: 12px;
+      outline: 3px solid #2196F3; border-radius: 12px;
     }
-
     #directionsButtonWrapper {
-      display: none;
-      text-align: center;
-      margin-top: 2rem;
+      display: none; text-align: center; margin-top: 2rem;
     }
-
     #directionsButton {
-      background: #2196F3;
-      color: white;
-      padding: 0.75rem 1.5rem;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
+      background: #2196F3; color: white;
+      padding: 0.75rem 1.5rem; border-radius: 6px;
+      text-decoration: none; font-weight: bold;
       display: inline-block;
     }
-
     #mapContainer {
-      margin-top: 1rem;
-      text-align: center;
+      margin-top: 1rem; text-align: center;
     }
-
     #mapContainer iframe {
-      width: 100%;
-      max-width: 900px;
-      height: 450px;
-      border: none;
+      width: 100%; max-width: 900px; height: 450px; border: none;
     }
   </style>
 </head>
 <body>
-
   <h2>How Far Are You From the Beach Lawns?</h2>
-
   <select id="regionSelector">
     <option value="">Select your region</option>
     <option value="South West">South West</option>
@@ -178,79 +89,77 @@
     <option value="North">North</option>
     <option value="Wales">Wales</option>
   </select>
-
   <input type="text" id="searchInput" placeholder="Search city...">
   <button id="backButton">Back to region select</button>
-
   <div id="regionsContainer"></div>
-
   <div id="directionsButtonWrapper">
     <a id="directionsButton" href="#" target="_blank">Get Directions</a>
     <div id="mapContainer"></div>
   </div>
 
   <script>
-        const regions = {
-      "South West": {
-        bristol: { name: "Bristol", time: "40 mins", fun: "Blink and you're there! 🚗💨" },
-        bath: { name: "Bath", time: "1 hour", fun: "Time for a pre-race playlist 🎵" },
-        exeter: { name: "Exeter", time: "1.5 hours", fun: "Cruise through the countryside 🌄" },
-        plymouth: { name: "Plymouth", time: "2.5 hours", fun: "Perfect for a podcast 🎙️" },
-        gloucester: { name: "Gloucester", time: "1.5 hours", fun: "Quick detour for snacks 🍬" },
-        taunton: { name: "Taunton", time: "1 hour", fun: "Right around the corner 🕐" },
-        torquay: { name: "Torquay", time: "2 hours", fun: "Seaside swap? Yes please 🏖️" },
-        barnstaple: { name: "Barnstaple", time: "2.5 hours", fun: "Backroads & good tunes 🚙" },
-        yeovil: { name: "Yeovil", time: "1.5 hours", fun: "Pit stop and you’re there ⛽" },
-        stroud: { name: "Stroud", time: "1.5 hours", fun: "Scenic and speedy 🌿" }
-      },
-      "South East": {
-        london: { name: "London", time: "2.5 hours", fun: "Enough time to crush 3 episodes 🎬" },
-        southampton: { name: "Southampton", time: "2.5 hours", fun: "Windows down, good tunes 🔊" },
-        reading: { name: "Reading", time: "2 hours", fun: "Snack, scroll, arrive 📱" },
-        brighton: { name: "Brighton", time: "3.5 hours", fun: "Beach-to-beach road trip 🏖️" },
-        oxford: { name: "Oxford", time: "2 hours", fun: "Scholarly drive 😎" },
-        portsmouth: { name: "Portsmouth", time: "3 hours", fun: "Sea air en route 🌊" },
-        miltonkeynes: { name: "Milton Keynes", time: "2.5 hours", fun: "Roundabout adventure ⭕" },
-        guildford: { name: "Guildford", time: "2.5 hours", fun: "Podcasts & pitstops 🎧" },
-        slough: { name: "Slough", time: "2 hours", fun: "Quick cruise from the edge of London 🚘" },
-        crawley: { name: "Crawley", time: "3 hours", fun: "Binge your fav album 🎶" }
-      },
-      "Midlands": {
-        birmingham: { name: "Birmingham", time: "2 hours", fun: "Snack, podcast, arrive 🎧" },
-        nottingham: { name: "Nottingham", time: "3 hours", fun: "One long playlist 🎶" },
-        leicester: { name: "Leicester", time: "3 hours", fun: "Get comfy and cruise 🚘" },
-        coventry: { name: "Coventry", time: "2.5 hours", fun: "Smooth ride and chill 🎵" },
-        derby: { name: "Derby", time: "3 hours", fun: "Stretch & drive 🚙" },
-        wolverhampton: { name: "Wolverhampton", time: "2 hours", fun: "Quick getaway 💨" },
-        stoke: { name: "Stoke-on-Trent", time: "3 hours", fun: "Pottery & playlists 🎧" },
-        nuneaton: { name: "Nuneaton", time: "2.5 hours", fun: "Nice cruise down 🚗" },
-        kidderminster: { name: "Kidderminster", time: "2.5 hours", fun: "Forest route 🍃" },
-        rugby: { name: "Rugby", time: "2.5 hours", fun: "Kick off your trip right 🏉" }
-      },
-      "North": {
-        manchester: { name: "Manchester", time: "3.5–4 hours", fun: "Road trip vibes incoming! 🛣️" },
-        leeds: { name: "Leeds", time: "4.5–5 hours", fun: "Definitely bring snacks 😴" },
-        sheffield: { name: "Sheffield", time: "4 hours", fun: "Ideal for a chill drive 🎵" },
-        newcastle: { name: "Newcastle", time: "6 hours", fun: "Snacks, podcasts, patience 🎧" },
-        liverpool: { name: "Liverpool", time: "4.5 hours", fun: "Great road tunes guaranteed 🎶" },
-        preston: { name: "Preston", time: "5 hours", fun: "Stretch breaks and bangers 🎵" },
-        bradford: { name: "Bradford", time: "4.5 hours", fun: "Chill drive time 🧊" },
-        huddersfield: { name: "Huddersfield", time: "4.5 hours", fun: "Long-haul legends only 🏆" },
-        wakefield: { name: "Wakefield", time: "5 hours", fun: "Fuel up and go ⛽" },
-        blackpool: { name: "Blackpool", time: "5.5 hours", fun: "Coast to coast adventure 🌊" }
-      },
-      "Wales": {
-        cardiff: { name: "Cardiff", time: "1 hour", fun: "Quick coffee, and you're there ☕" },
-        swansea: { name: "Swansea", time: "2 hours", fun: "Kick back with your playlist 🧘" },
-        newport: { name: "Newport", time: "1 hour", fun: "Just enough time to scroll the ‘Gram 📱" },
-        wrexham: { name: "Wrexham", time: "3 hours", fun: "Up for a road adventure 🛻" },
-        bangor: { name: "Bangor", time: "4.5 hours", fun: "Settle in with some good audio 🔊" },
-        aberystwyth: { name: "Aberystwyth", time: "3.5 hours", fun: "Scenic all the way 🏞️" },
-        bridgend: { name: "Bridgend", time: "1.5 hours", fun: "Coast in with ease 🚗" },
-        merthyr: { name: "Merthyr Tydfil", time: "1.5 hours", fun: "A breeze on the A roads 🌬️" },
-        llanelli: { name: "Llanelli", time: "2 hours", fun: "Smooth trip west 🚙" },
-        caerphilly: { name: "Caerphilly", time: "1 hour", fun: "Castle view on the way 🏰" }
-      }
+    const regions = { 
+  "South West": {
+    bristol: { name: "Bristol", time: "40 mins", fun: "Blink and you're there! 🚗💨" },
+    bath: { name: "Bath", time: "1 hour", fun: "Time for a pre-race playlist 🎵" },
+    exeter: { name: "Exeter", time: "1.5 hours", fun: "Cruise through the countryside 🌄" },
+    plymouth: { name: "Plymouth", time: "2.5 hours", fun: "Perfect for a podcast 🎙️" },
+    gloucester: { name: "Gloucester", time: "1.5 hours", fun: "Quick detour for snacks 🍬" },
+    taunton: { name: "Taunton", time: "1 hour", fun: "Right around the corner 🕐" },
+    torquay: { name: "Torquay", time: "2 hours", fun: "Seaside swap? Yes please 🏖️" },
+    barnstaple: { name: "Barnstaple", time: "2.5 hours", fun: "Backroads & good tunes 🚙" },
+    yeovil: { name: "Yeovil", time: "1.5 hours", fun: "Pit stop and you’re there ⛽" },
+    stroud: { name: "Stroud", time: "1.5 hours", fun: "Scenic and speedy 🌿" }
+  },
+  "South East": {
+    london: { name: "London", time: "2.5 hours", fun: "Enough time to crush 3 episodes 🎬" },
+    southampton: { name: "Southampton", time: "2.5 hours", fun: "Windows down, good tunes 🔊" },
+    reading: { name: "Reading", time: "2 hours", fun: "Snack, scroll, arrive 📱" },
+    brighton: { name: "Brighton", time: "3.5 hours", fun: "Beach-to-beach road trip 🏖️" },
+    oxford: { name: "Oxford", time: "2 hours", fun: "Scholarly drive 😎" },
+    portsmouth: { name: "Portsmouth", time: "3 hours", fun: "Sea air en route 🌊" },
+    miltonkeynes: { name: "Milton Keynes", time: "2.5 hours", fun: "Roundabout adventure ⭕" },
+    guildford: { name: "Guildford", time: "2.5 hours", fun: "Podcasts & pitstops 🎧" },
+    slough: { name: "Slough", time: "2 hours", fun: "Quick cruise from the edge of London 🚘" },
+    crawley: { name: "Crawley", time: "3 hours", fun: "Binge your fav album 🎶" }
+  },
+  "Midlands": {
+    birmingham: { name: "Birmingham", time: "2 hours", fun: "Snack, podcast, arrive 🎧" },
+    nottingham: { name: "Nottingham", time: "3 hours", fun: "One long playlist 🎶" },
+    leicester: { name: "Leicester", time: "3 hours", fun: "Get comfy and cruise 🚘" },
+    coventry: { name: "Coventry", time: "2.5 hours", fun: "Smooth ride and chill 🎵" },
+    derby: { name: "Derby", time: "3 hours", fun: "Stretch & drive 🚙" },
+    wolverhampton: { name: "Wolverhampton", time: "2 hours", fun: "Quick getaway 💨" },
+    stoke: { name: "Stoke-on-Trent", time: "3 hours", fun: "Pottery & playlists 🎧" },
+    nuneaton: { name: "Nuneaton", time: "2.5 hours", fun: "Nice cruise down 🚗" },
+    kidderminster: { name: "Kidderminster", time: "2.5 hours", fun: "Forest route 🍃" },
+    rugby: { name: "Rugby", time: "2.5 hours", fun: "Kick off your trip right 🏉" }
+  },
+  "North": {
+    manchester: { name: "Manchester", time: "3.5–4 hours", fun: "Road trip vibes incoming! 🛣️" },
+    leeds: { name: "Leeds", time: "4.5–5 hours", fun: "Definitely bring snacks 😴" },
+    sheffield: { name: "Sheffield", time: "4 hours", fun: "Ideal for a chill drive 🎵" },
+    newcastle: { name: "Newcastle", time: "6 hours", fun: "Snacks, podcasts, patience 🎧" },
+    liverpool: { name: "Liverpool", time: "4.5 hours", fun: "Great road tunes guaranteed 🎶" },
+    preston: { name: "Preston", time: "5 hours", fun: "Stretch breaks and bangers 🎵" },
+    bradford: { name: "Bradford", time: "4.5 hours", fun: "Chill drive time 🧊" },
+    huddersfield: { name: "Huddersfield", time: "4.5 hours", fun: "Long-haul legends only 🏆" },
+    wakefield: { name: "Wakefield", time: "5 hours", fun: "Fuel up and go ⛽" },
+    blackpool: { name: "Blackpool", time: "5.5 hours", fun: "Coast to coast adventure 🌊" }
+  },
+  "Wales": {
+    cardiff: { name: "Cardiff", time: "1 hour", fun: "Quick coffee, and you're there ☕" },
+    swansea: { name: "Swansea", time: "2 hours", fun: "Kick back with your playlist 🧘" },
+    newport: { name: "Newport", time: "1 hour", fun: "Just enough time to scroll the ‘Gram 📱" },
+    wrexham: { name: "Wrexham", time: "3 hours", fun: "Up for a road adventure 🛻" },
+    bangor: { name: "Bangor", time: "4.5 hours", fun: "Settle in with some good audio 🔊" },
+    aberystwyth: { name: "Aberystwyth", time: "3.5 hours", fun: "Scenic all the way 🏞️" },
+    bridgend: { name: "Bridgend", time: "1.5 hours", fun: "Coast in with ease 🚗" },
+    merthyr: { name: "Merthyr Tydfil", time: "1.5 hours", fun: "A breeze on the A roads 🌬️" },
+    llanelli: { name: "Llanelli", time: "2 hours", fun: "Smooth trip west 🚙" },
+    caerphilly: { name: "Caerphilly", time: "1 hour", fun: "Castle view on the way 🏰" }
+  }
+};
 
     const container = document.getElementById("regionsContainer");
     const selector = document.getElementById("regionSelector");
@@ -302,7 +211,6 @@
           const gmapsURL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(cityName)}&destination=Weston-super-Mare`;
           directionsButton.href = gmapsURL;
 
-          // Embed map with basic "from X to Weston" format (no API key needed)
           mapContainer.innerHTML = `
             <iframe
               src="https://www.google.com/maps?output=embed&q=from ${encodeURIComponent(cityName)} to Weston-super-Mare"
@@ -358,6 +266,5 @@
       mapContainer.innerHTML = "";
     });
   </script>
-
 </body>
 </html>
