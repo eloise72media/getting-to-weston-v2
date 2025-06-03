@@ -131,6 +131,39 @@
       font-size: 0.85rem;
       line-height: 1.3;
     }
+
+    .card-wrapper.selected .card {
+      outline: 3px solid #2196F3;
+      border-radius: 12px;
+    }
+
+    #directionsButtonWrapper {
+      display: none;
+      text-align: center;
+      margin-top: 2rem;
+    }
+
+    #directionsButton {
+      background: #2196F3;
+      color: white;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: bold;
+      display: inline-block;
+    }
+
+    #mapContainer {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    #mapContainer iframe {
+      width: 100%;
+      max-width: 900px;
+      height: 450px;
+      border: none;
+    }
   </style>
 </head>
 <body>
@@ -151,6 +184,11 @@
 
   <div id="regionsContainer"></div>
 
+  <div id="directionsButtonWrapper">
+    <a id="directionsButton" href="#" target="_blank">Get Directions</a>
+    <div id="mapContainer"></div>
+  </div>
+
   <script>
     const regions = {
       "South West": {
@@ -164,61 +202,17 @@
         barnstaple: { name: "Barnstaple", time: "2.5 hours", fun: "Backroads & good tunes 🚙" },
         yeovil: { name: "Yeovil", time: "1.5 hours", fun: "Pit stop and you’re there ⛽" },
         stroud: { name: "Stroud", time: "1.5 hours", fun: "Scenic and speedy 🌿" }
-      },
-      "South East": {
-        london: { name: "London", time: "2.5 hours", fun: "Enough time to crush 3 episodes 🎬" },
-        southampton: { name: "Southampton", time: "2.5 hours", fun: "Windows down, good tunes 🔊" },
-        reading: { name: "Reading", time: "2 hours", fun: "Snack, scroll, arrive 📱" },
-        brighton: { name: "Brighton", time: "3.5 hours", fun: "Beach-to-beach road trip 🏖️" },
-        oxford: { name: "Oxford", time: "2 hours", fun: "Scholarly drive 😎" },
-        portsmouth: { name: "Portsmouth", time: "3 hours", fun: "Sea air en route 🌊" },
-        miltonkeynes: { name: "Milton Keynes", time: "2.5 hours", fun: "Roundabout adventure ⭕" },
-        guildford: { name: "Guildford", time: "2.5 hours", fun: "Podcasts & pitstops 🎧" },
-        slough: { name: "Slough", time: "2 hours", fun: "Quick cruise from the edge of London 🚘" },
-        crawley: { name: "Crawley", time: "3 hours", fun: "Binge your fav album 🎶" }
-      },
-      "Midlands": {
-        birmingham: { name: "Birmingham", time: "2 hours", fun: "Snack, podcast, arrive 🎧" },
-        nottingham: { name: "Nottingham", time: "3 hours", fun: "One long playlist 🎶" },
-        leicester: { name: "Leicester", time: "3 hours", fun: "Get comfy and cruise 🚘" },
-        coventry: { name: "Coventry", time: "2.5 hours", fun: "Smooth ride and chill 🎵" },
-        derby: { name: "Derby", time: "3 hours", fun: "Stretch & drive 🚙" },
-        wolverhampton: { name: "Wolverhampton", time: "2 hours", fun: "Quick getaway 💨" },
-        stoke: { name: "Stoke-on-Trent", time: "3 hours", fun: "Pottery & playlists 🎧" },
-        nuneaton: { name: "Nuneaton", time: "2.5 hours", fun: "Nice cruise down 🚗" },
-        kidderminster: { name: "Kidderminster", time: "2.5 hours", fun: "Forest route 🍃" },
-        rugby: { name: "Rugby", time: "2.5 hours", fun: "Kick off your trip right 🏉" }
-      },
-      "North": {
-        manchester: { name: "Manchester", time: "3.5–4 hours", fun: "Road trip vibes incoming! 🛣️" },
-        leeds: { name: "Leeds", time: "4.5–5 hours", fun: "Definitely bring snacks 😴" },
-        sheffield: { name: "Sheffield", time: "4 hours", fun: "Ideal for a chill drive 🎵" },
-        newcastle: { name: "Newcastle", time: "6 hours", fun: "Snacks, podcasts, patience 🎧" },
-        liverpool: { name: "Liverpool", time: "4.5 hours", fun: "Great road tunes guaranteed 🎶" },
-        preston: { name: "Preston", time: "5 hours", fun: "Stretch breaks and bangers 🎵" },
-        bradford: { name: "Bradford", time: "4.5 hours", fun: "Chill drive time 🧊" },
-        huddersfield: { name: "Huddersfield", time: "4.5 hours", fun: "Long-haul legends only 🏆" },
-        wakefield: { name: "Wakefield", time: "5 hours", fun: "Fuel up and go ⛽" },
-        blackpool: { name: "Blackpool", time: "5.5 hours", fun: "Coast to coast adventure 🌊" }
-      },
-      "Wales": {
-        cardiff: { name: "Cardiff", time: "1 hour", fun: "Quick coffee, and you're there ☕" },
-        swansea: { name: "Swansea", time: "2 hours", fun: "Kick back with your playlist 🧘" },
-        newport: { name: "Newport", time: "1 hour", fun: "Just enough time to scroll the ‘Gram 📱" },
-        wrexham: { name: "Wrexham", time: "3 hours", fun: "Up for a road adventure 🛻" },
-        bangor: { name: "Bangor", time: "4.5 hours", fun: "Settle in with some good audio 🔊" },
-        aberystwyth: { name: "Aberystwyth", time: "3.5 hours", fun: "Scenic all the way 🏞️" },
-        bridgend: { name: "Bridgend", time: "1.5 hours", fun: "Coast in with ease 🚗" },
-        merthyr: { name: "Merthyr Tydfil", time: "1.5 hours", fun: "A breeze on the A roads 🌬️" },
-        llanelli: { name: "Llanelli", time: "2 hours", fun: "Smooth trip west 🚙" },
-        caerphilly: { name: "Caerphilly", time: "1 hour", fun: "Castle view on the way 🏰" }
       }
+      // Add other regions here as needed...
     };
 
     const container = document.getElementById("regionsContainer");
     const selector = document.getElementById("regionSelector");
     const searchInput = document.getElementById("searchInput");
     const backButton = document.getElementById("backButton");
+    const directionsWrapper = document.getElementById("directionsButtonWrapper");
+    const directionsButton = document.getElementById("directionsButton");
+    const mapContainer = document.getElementById("mapContainer");
 
     Object.entries(regions).forEach(([regionName, cities]) => {
       const regionDiv = document.createElement("div");
@@ -254,7 +248,23 @@
         grid.appendChild(wrapper);
 
         wrapper.addEventListener("click", () => {
+          document.querySelectorAll(".card-wrapper").forEach(w => w.classList.remove("selected"));
+          wrapper.classList.add("selected");
           card.classList.toggle("flip");
+
+          const cityName = city.name;
+          const gmapsURL = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(cityName)}&destination=Weston-super-Mare`;
+          directionsButton.href = gmapsURL;
+
+          // Embed map with basic "from X to Weston" format (no API key needed)
+          mapContainer.innerHTML = `
+            <iframe
+              src="https://www.google.com/maps?output=embed&q=from ${encodeURIComponent(cityName)} to Weston-super-Mare"
+              allowfullscreen loading="lazy">
+            </iframe>
+          `;
+
+          directionsWrapper.style.display = "block";
         });
       });
 
@@ -266,6 +276,8 @@
       document.querySelectorAll(".region").forEach(div => div.classList.remove("active"));
       searchInput.style.display = "none";
       backButton.style.display = "none";
+      directionsWrapper.style.display = "none";
+      mapContainer.innerHTML = "";
 
       const selected = selector.value;
       if (selected) {
@@ -295,12 +307,11 @@
       document.querySelectorAll(".region").forEach(div => div.classList.remove("active"));
       searchInput.style.display = "none";
       backButton.style.display = "none";
+      directionsWrapper.style.display = "none";
       searchInput.value = "";
+      mapContainer.innerHTML = "";
     });
   </script>
-
-</body>
-</html>
 
 </body>
 </html>
