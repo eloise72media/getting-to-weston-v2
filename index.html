@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Getting to Weston-super-Mare</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+      background: #fff;
+      color: #222;
+      padding: 2rem;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    #regionSelector,
+    #searchInput,
+    #backButton {
+      display: block;
+      margin: 0.5rem auto;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      max-width: 300px;
+    }
+
+    #searchInput {
+      display: none;
+    }
+
+    #backButton {
+      display: none;
+      background: #f44336;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+
+    .region {
+      display: none;
+      margin-top: 2rem;
+    }
+
+    .region.active {
+      display: block;
+      animation: fadeIn 0.5s ease-in;
+    }
+
+    .region h3 {
+      text-align: center;
+      border-bottom: 2px solid #eee;
+      padding-bottom: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+      gap: 1rem;
+    }
+
+    .card-wrapper {
+      perspective: 1000px;
+      cursor: pointer;
+      animation: popIn 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    @keyframes popIn {
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
+      from {
+        transform: scale(0.95);
+        opacity: 0;
+      }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .card {
+      width: 100%;
+      height: 130px;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s;
+    }
+
+    .card.flip {
+      transform: rotateY(180deg);
+    }
+
+    .card-side {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      backface-visibility: hidden;
+      border-radius: 10px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+      padding: 0.75rem;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      background: #f9f9f9;
+    }
+
+    .card-front {
+      background: #ffffff;
+      font-weight: bold;
+      text-align: center;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card-back {
+      transform: rotateY(180deg);
+      background: #e3f1ff;
+      font-size: 0.85rem;
+      line-height: 1.3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>How Far Are You From the Beach Lawns?</h2>
+
+  <select id="regionSelector">
+    <option value="">Select your region</option>
+    <option value="South West">South West</option>
+    <option value="South East">South East</option>
+    <option value="Midlands">Midlands</option>
+    <option value="North">North</option>
+    <option value="Wales">Wales</option>
+  </select>
+
+  <input type="text" id="searchInput" placeholder="Search city...">
+  <button id="backButton">Back to region select</button>
+
+  <div id="regionsContainer"></div>
+
+  <script>
+    const regions = {
+      "South West": {
+        bristol: { name: "Bristol", time: "40 mins", fun: "Blink and you’re there! 🚗💨" },
+        bath: { name: "Bath", time: "1 hour", fun: "Time for a pre-race playlist 🎵" },
+        exeter: { name: "Exeter", time: "1.5 hours", fun: "Cruise through the countryside 🌄" },
+        plymouth: { name: "Plymouth", time: "2.5 hours", fun: "Perfect for a podcast + snacks 🎙️" },
+        gloucester: { name: "Gloucester", time: "1.5 hours", fun: "Quick detour for snacks 🍬" }
+      },
+      "South East": {
+        london: { name: "London", time: "2.5 hours", fun: "Enough time to crush 3 episodes 🎬" },
+        southampton: { name: "Southampton", time: "2.5 hours", fun: "Windows down, good tunes 🔊" },
+        reading: { name: "Reading", time: "2 hours", fun: "Snack, scroll, arrive 📱" },
+        brighton: { name: "Brighton", time: "3.5 hours", fun: "Beach-to-beach road trip 🏖️" }
+      },
+      "Midlands": {
+        birmingham: { name: "Birmingham", time: "2 hours", fun: "Snack, podcast, arrive 🎧" },
+        nottingham: { name: "Nottingham", time: "3 hours", fun: "One long playlist and you’re golden 🎶" },
+        leicester: { name: "Leicester", time: "3 hours", fun: "Get comfy and cruise 🚘" },
+        coventry: { name: "Coventry", time: "2.5 hours", fun: "Smooth ride and chill tunes 🎵" }
+      },
+      "North": {
+        manchester: { name: "Manchester", time: "3.5–4 hours", fun: "Road trip vibes incoming! 🛣️" },
+        leeds: { name: "Leeds", time: "4.5–5 hours", fun: "Definitely bring snacks 😴" },
+        sheffield: { name: "Sheffield", time: "4 hours", fun: "Ideal for a chill drive 🎵" },
+        newcastle: { name: "Newcastle", time: "6 hours", fun: "You’ll need snacks, podcasts & patience 🎧" }
+      },
+      "Wales": {
+        cardiff: { name: "Cardiff", time: "1 hour", fun: "Quick coffee, and you're there ☕" },
+        swansea: { name: "Swansea", time: "2 hours", fun: "Kick back with your playlist 🧘" },
+        newport: { name: "Newport", time: "1 hour", fun: "Just enough time to scroll the ‘Gram 📱" }
+      }
+    };
+
+    const container = document.getElementById("regionsContainer");
+    const selector = document.getElementById("regionSelector");
+    const searchInput = document.getElementById("searchInput");
+    const backButton = document.getElementById("backButton");
+
+    // Build regions
+    Object.entries(regions).forEach(([regionName, cities]) => {
+      const regionDiv = document.createElement("div");
+      regionDiv.className = "region";
+      regionDiv.id = `region-${regionName.replace(/\s+/g, '-')}`;
+
+      const heading = document.createElement("h3");
+      heading.textContent = regionName;
+      regionDiv.appendChild(heading);
+
+      const grid = document.createElement("div");
+      grid.className = "grid";
+
+      Object.entries(cities).forEach(([key, city]) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "card-wrapper";
+        wrapper.dataset.city = city.name.toLowerCase();
+
+        const card = document.createElement("div");
+        card.className = "card";
+
+        const front = document.createElement("div");
+        front.className = "card-side card-front";
+        front.textContent = city.name;
+
+        const back = document.createElement("div");
+        back.className = "card-side card-back";
+        back.innerHTML = `<strong>Travel Time:</strong><br>${city.time}<br><br><em>${city.fun}</em>`;
+
+        card.appendChild(front);
+        card.appendChild(back);
+        wrapper.appendChild(card);
+        grid.appendChild(wrapper);
+
+        wrapper.addEventListener("click", () => {
+          card.classList.toggle("flip");
+        });
+      });
+
+      regionDiv.appendChild(grid);
+      container.appendChild(regionDiv);
+    });
+
+    selector.addEventListener("change", () => {
+      document.querySelectorAll(".region").forEach(div => div.classList.remove("active"));
+      searchInput.style.display = "none";
+      backButton.style.display = "none";
+
+      const selected = selector.value;
+      if (selected) {
+        const id = `region-${selected.replace(/\s+/g, '-')}`;
+        const region = document.getElementById(id);
+        if (region) {
+          region.classList.add("active");
+          searchInput.style.display = "block";
+          backButton.style.display = "block";
+          searchInput.value = "";
+        }
+      }
+    });
+
+    searchInput.addEventListener("input", () => {
+      const filter = searchInput.value.toLowerCase();
+      const region = document.querySelector(".region.active");
+      if (region) {
+        region.querySelectorAll(".card-wrapper").forEach(wrapper => {
+          wrapper.style.display = wrapper.dataset.city.includes(filter) ? "block" : "none";
+        });
+      }
+    });
+
+    backButton.addEventListener("click", () => {
+      selector.value = "";
+      document.querySelectorAll(".region").forEach(div => div.classList.remove("active"));
+      searchInput.style.display = "none";
+      backButton.style.display = "none";
+      searchInput.value = "";
+    });
+  </script>
+
+</body>
+</html>
